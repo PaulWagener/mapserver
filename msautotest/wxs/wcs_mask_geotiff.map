@@ -1,0 +1,51 @@
+#
+# Test WCS mask with a GeoTIFF file.
+#
+# REQUIRES: INPUT=GDAL OUTPUT=PNG SUPPORTS=WCS
+#
+# Generate simple PNG.
+# RUN_PARMS: wcs_mask_geotiff.png [MAPSERV] QUERY_STRING="map=[MAPFILE]&SERVICE=WCS&VERSION=1.0.0&REQUEST=GetCoverage&WIDTH=93&HEIGHT=82&FORMAT=PNG&BBOX=700200,5707320,705780,5712180&COVERAGE=london&CRS=EPSG:32630" > [RESULT_DEMIME]
+
+MAP
+
+SHAPEPATH "data"
+
+PROJECTION
+  "init=epsg:32630"
+END
+
+WEB
+  METADATA
+   "ows_enable_request" "*"
+  END
+END
+
+LAYER
+  NAME "mask"
+  TYPE polygon
+  STATUS OFF
+  DATA "london_thames.shp"
+
+  PROJECTION
+    "init=epsg:32630"
+  END
+  CLASS
+    STYLE
+      COLOR 0 0 0
+    END
+  END
+END
+
+LAYER
+  NAME london
+  TYPE raster
+  STATUS ON
+  DATA "london.tif"
+  MASK "mask"
+
+  PROJECTION
+    "init=epsg:32630"
+  END
+END
+
+END
