@@ -2007,10 +2007,12 @@ this request. Check wcs/ows_enable_request settings.", "msWCSGetCoverage()", par
   map->cellsize = params->resx;
 
   /* Do we need to force special handling?  */
+#if MS_FALSE // Disable special handling to fix issue #6045
   if( fabs(params->resx/params->resy - 1.0) > 0.001 ) {
     map->gt.need_geotransform = MS_TRUE;
     if( map->debug ) msDebug( "RESX and RESY don't match.  Using geotransform/resample.\n");
   }
+#endif
 
   /* Do we have a specified interpolation method */
   if( params->interpolation != NULL ) {
@@ -2050,7 +2052,7 @@ this request. Check wcs/ows_enable_request settings.", "msWCSGetCoverage()", par
 
   map->extent = params->bbox;
 
-  map->cellsize = params->resx; /* pick one, MapServer only supports square cells (what about msAdjustExtent here!) */
+  map->cellsize = msAdjustExtent(&(map->extent),map->width,map->height);
 
   msMapComputeGeotransform(map);
 
